@@ -107,11 +107,15 @@
         <img id="buttonImage" src="ver.png" alt="Button" onclick="buttonClick()" />
     </div>
     </div>
-<script>
+    <script>
         var video = document.querySelector("#videoElement");
         var canvas = document.getElementById('glassesCanvas');
         var ctx = canvas.getContext('2d');
 
+var userText = prompt("What is your LUCKY COMMENT?", "잘 되면 잘 된 거고 잘 못되면 그냥 해본 거였어~");
+        if (!userText) {
+            userText = "으쓱?";
+        }
 
         if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true })
@@ -195,49 +199,45 @@
     ctx.fillStyle = 'black';
     ctx.font = '25px ChosunGu';
 
-    if (text) {
-                const words = text.split(' ');
-                let lineText = '';
-                const maxWidth = bubbleWidth * 0.8;
+    const words = text.split(' ');
+    let lineText = '';
+    const maxWidth = bubbleWidth * 0.8;
 
-                const lineHeight = 25; 
-                let y = bubbleY - 10;
+    const lineHeight = 25; 
+    let y = bubbleY - 10;
 
-                for (let i = 0; i < words.length; i++) {
-                    const testLine = lineText + words[i] + ' ';
-                    const metrics = ctx.measureText(testLine);
-                    const testWidth = metrics.width;
+    for (let i = 0; i < words.length; i++) {
+        const testLine = lineText + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
 
-                    if (testWidth > maxWidth && i > 0) {
-                        ctx.fillText(lineText, bubbleX - maxWidth / 2 + 10, y); 
-                        lineText = words[i] + ' ';
-                        y += lineHeight;
-                    } else {
-                        lineText = testLine;
-                    }
-                }
-                ctx.fillText(lineText, bubbleX - maxWidth / 2 + 10, y);
-            }
+        if (testWidth > maxWidth && i > 0) {
+            ctx.fillText(lineText, bubbleX - maxWidth / 2 + 10, y); 
+            lineText = words[i] + ' ';
+            y += lineHeight;
+        } else {
+            lineText = testLine;
         }
-
-    
+    }
+    ctx.fillText(lineText, bubbleX - maxWidth / 2 + 10, y);
+}
+        
         video.addEventListener('loadedmetadata', () => {
             canvas.width = video.videoWidth + 100;
             canvas.height = video.videoHeight + 50;
-            drawGlasses(); 
-            drawSpeechBubble(''); 
+             drawGlasses();
+             drawSpeechBubble(userText);
+
+           
         });
 
         function buttonClick() {
-    const inputText = document.getElementById('textInput').value; 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawGlasses(); 
-    drawSpeechBubble(inputText); 
-}
+            const inputText = document.getElementById('textInput').value;
+            drawGlasses();
+            drawSpeechBubble(inputText); 
+        }
 
     
     </script>
-    
 </body>
 </html>
-
