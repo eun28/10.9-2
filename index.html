@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Webcam with Random Glasses</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Dots:wght@400..700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Chosun+Gu&display=swap" rel="stylesheet">
+
+
+    <style>
+
+@font-face {
+    font-family: 'ChosunGu';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGu.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #container {
+            margin: 0px auto;
+            width: 800px;
+            height: 550px;
+            border: 10px black solid;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        #videoElement {
+            width: 800px;
+            height: 550px;
+            background-color: #666;
+            position: relative;
+        z-index: 2;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+        }
+
+        h1{font-family: "Edu AU VIC WA NT Dots", cursive; font-size: 5.5rem; margin: 0;  position: absolute;
+            top: 20px; z-index: 4; }
+
+            #buttonContainer {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            right: -110px; 
+            top: 50%; 
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        #buttonImage {
+            width: 110px; 
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: -1;
+        }
+
+         #buttonImage:hover {
+            transform: rotate(15deg); 
+        }
+
+        #textInput {
+            position: absolute;
+            top: -50px;
+            left: 30px;
+            width: 200px;
+            height: 30px;
+            text-align: center; 
+            z-index: 1;
+            font-size: 16px; 
+        }
+
+    </style>
+
+</head>
+<body>
+    <h1>Today <span id="luckyColor">Lucky Color</span> Glasses</h1>
+    <div id="container">
+        <video autoplay="true" id="videoElement"></video>
+        <canvas id="glassesCanvas"></canvas>
+    <div id="buttonContainer">
+        <input type="text" id="textInput" placeholder="New Lucky Comment" />
+        <img id="buttonImage" src="ver.png" alt="Button" onclick="buttonClick()" />
+    </div>
+    </div>
+    <script>
+        var video = document.querySelector("#videoElement");
+        var canvas = document.getElementById('glassesCanvas');
+        var ctx = canvas.getContext('2d');
+
+var userText = prompt("What is your LUCKY COMMENT?", "잘 되면 잘 된 거고 잘 못되면 그냥 해본 거였어~");
+        if (!userText) {
+            userText = "으쓱?";
+        }
+
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function (err0r) {
+                console.log("Something went wrong!");
+            });
+        }
+
+       
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+  
+        function drawGlasses() {
+            const color = getRandomColor(); 
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            
+            const centerX = (canvas.width / 2) + 40; 
+            const centerY = canvas.height / 2;
+            const radiusX = 60; 
+            const radiusY = 30; 
+            const gap = 20; 
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = color;
+
+            
+            ctx.beginPath();
+            ctx.ellipse(centerX - radiusX - gap, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+            ctx.stroke();
+
+           
+            ctx.beginPath();
+            ctx.ellipse(centerX + radiusX + gap, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX - radiusX - gap + 60, centerY);
+            ctx.lineTo(centerX + radiusX + gap - 60, centerY);
+            ctx.stroke();
+        }
+
+         function drawSpeechBubble(text) {
+    const bubbleX = (canvas.width - 125);
+    const bubbleY = (canvas.height * 0.2);
+    const bubbleWidth = 240;
+    const bubbleHeight = 140;
+
+    ctx.fillStyle = 'white';
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.ellipse(bubbleX, bubbleY, bubbleWidth / 2, bubbleHeight / 2, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+
+    const tailX = bubbleX - 20;
+    const tailY = bubbleY + bubbleHeight / 2;
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(tailX - 20, tailY + 40);
+    ctx.lineTo(tailX + 30, tailY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = 'black';
+    ctx.font = '25px ChosunGu';
+
+    const words = text.split(' ');
+    let lineText = '';
+    const maxWidth = bubbleWidth * 0.8;
+
+    const lineHeight = 25; 
+    let y = bubbleY - 10;
+
+    for (let i = 0; i < words.length; i++) {
+        const testLine = lineText + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+
+        if (testWidth > maxWidth && i > 0) {
+            ctx.fillText(lineText, bubbleX - maxWidth / 2 + 10, y); 
+            lineText = words[i] + ' ';
+            y += lineHeight;
+        } else {
+            lineText = testLine;
+        }
+    }
+    ctx.fillText(lineText, bubbleX - maxWidth / 2 + 10, y);
+}
+        
+        video.addEventListener('loadedmetadata', () => {
+            canvas.width = video.videoWidth + 100;
+            canvas.height = video.videoHeight + 50;
+             drawGlasses();
+             drawSpeechBubble(userText);
+
+           
+        });
+
+        function buttonClick() {
+            const inputText = document.getElementById('textInput').value;
+            drawGlasses();
+            drawSpeechBubble(inputText); 
+        }
+
+    
+    </script>
+</body>
+</html>
+
